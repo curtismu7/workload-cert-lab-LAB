@@ -27,7 +27,7 @@ const STORY = {
 export function createApp() {
   installNetguard();
   const app = express();
-  app.use(express.json());
+  app.use(express.json({ limit: '256kb' }));
   const ca = new MockAuthority(TRUST_DOMAIN);
 
   app.get('/api/health', (_req, res) => {
@@ -117,8 +117,14 @@ export function createApp() {
     res.json(r);
   });
 
-  // Rule 23: any unreachable upstream answers structured JSON, never an HTML page or a hang.
+  // Rule 23: any unreachable upstream or bad request shape answers structured JSON, never an HTML page or a hang.
   app.use('/api', (err, _req, res, _next) => {
+    if (err && (err.type === 'entity.too.large' || /entity too large/i.test(err.message || ''))) {
+      return res.status(413).json({ error: 'payload_too_large', message: 'request body exceeds the 256KB limit' });
+    }
+    if (err && (err.type === 'entity.parse.failed' || err instanceof SyntaxError)) {
+      return res.status(400).json({ error: 'invalid_json', message: 'request body is not valid JSON' });
+    }
     const code = err && (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND' || err.code === 'ETIMEDOUT') ? 424 : 500;
     res.status(code).json({ error: err?.code || 'internal_error', message: err?.message || 'unexpected server error' });
   });

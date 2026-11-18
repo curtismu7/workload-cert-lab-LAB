@@ -40,7 +40,7 @@ describe('workload-cert-lab API', () => {
   it('attack foreign-domain is refused', async () => {
     const r = await request(createApp()).post('/api/attack').send({ kind: 'foreign-domain' });
     assert.equal(r.body.valid, false);
-    assert.ok(r.body.failures.join(' ').includes('trust domain'));
+    assert.ok(r.body.failures.includes('SAN URI is not in trust domain corp.example.com'), JSON.stringify(r.body.failures));
   });
 
   it('attack tampered is refused', async () => {

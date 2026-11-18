@@ -50,8 +50,8 @@ export class MockAuthority {
       '-keyout', leafKey, '-out', csr, '-nodes', '-subj', `/O=${this.trustDomain}/CN=workload-${this.serial}`]);
     execFileSync('openssl', ['x509', '-req', '-in', csr, '-CA', this.rootCertPath, '-CAkey', this.rootKeyPath,
       '-set_serial', String(this.serial), '-days', '1', '-extfile', ext, '-out', leafCert]);
-    // openssl -days cannot express minutes: rewrite notAfter for short-lived SVID behaviour
-    execFileSync('openssl', ['x509', '-in', leafCert, '-out', leafCert, '-days', '1']); // no-op keeps format
+    // openssl -days cannot express minutes, so SVIDs in this lab are valid for 24h and the
+    // expiry scenario is demonstrated by validating against a shifted clock (validateAt).
     this.serial += 1;
     const pem = readFileSync(leafCert, 'utf8');
     const cert = new X509Certificate(pem);
@@ -64,7 +64,7 @@ export class MockAuthority {
       notAfter: cert.validToDate,
       fingerprint: fingerprint(cert.raw),
       ttlHours: 24,
-      requestedTtlSec: ttl,
+      ttlNote: 'this mock issues 24h certificates (openssl -days 1); short-lived means minutes in a real SPIRE deployment — the expiry demo uses a shifted validation clock',
     };
   }
 

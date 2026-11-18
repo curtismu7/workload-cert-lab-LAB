@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import ReactFlow, { Background, Controls } from 'reactflow';
 import 'reactflow/dist/style.css';
+import TopMenu from './top-menu/TopMenu.jsx';
+import './top-menu/top-menu.css';
+import Json from './json/JsonPane.jsx';
+import './json/JsonPane.css';
+import './standalone-ui.css';
 import './app.css';
 
 const nodePos = (p) => p || { x: 0, y: 0 };
@@ -13,18 +18,42 @@ const ATTACKS = [
 
 export default function App() {
   const [health, setHealth] = useState(null);
+  const [info, setInfo] = useState(null);
+  const [story, setStory] = useState(null);
   const [root, setRoot] = useState(null);
   const [svid, setSvid] = useState(null);
   const [handshake, setHandshake] = useState(null);
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(false);
-  const [speed, setSpeed] = useState(1);
+  const [present, setPresent] = useState(false);
+  const [talkTrack, setTalkTrack] = useState(false);
+  const [theme, setTheme] = useState('auto');
+  const [fontSize, setFontSize] = useState('M');
+  const [mode, setMode] = useState('mock');
   const [path, setPath] = useState('/orders');
 
   useEffect(() => {
     fetch('/api/health').then((r) => r.json()).then(setHealth).catch(() => {});
+    fetch('/api/info').then((r) => r.json()).then((i) => { setInfo(i); setMode(i.source); }).catch(() => {});
+    fetch('/api/story').then((r) => r.json()).then(setStory).catch(() => {});
     fetch('/api/root').then((r) => r.json()).then(setRoot).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  const switchMode = async (next) => {
+    const r = await fetch('/api/mode', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ source: next }),
+    });
+    if (r.ok) {
+      setMode(next);
+      const i = await (await fetch('/api/info')).json();
+      setInfo(i);
+    }
+  };
 
   const mint = async () => {
     setBusy(true); setResult(null); setHandshake(null);
@@ -53,7 +82,7 @@ export default function App() {
     setResult(r); setBusy(false);
   };
 
-  const reset = () => { setSvid(null); setHandshake(null); setResult(null); };
+  const reset = () => { setSvid(null); setHandshake(null); setResult(null); setPath('/orders'); };
 
   const nodes = [
     { id: 'ca', position: nodePos({ x: 0, y: 60 }), data: { label: `Trust-domain CA\n${root?.trustDomain || '…'}` } },
@@ -70,8 +99,32 @@ export default function App() {
     <div className="lab">
       <header className="shell-bar">
         <h1>Workload Cert Lab</h1>
-        <span className="banner">Simulation: the CA, certificates and handshake are in-process mocks using real X.509 (openssl). Nothing leaves this container.</span>
+        <TopMenu
+          mode={{ value: mode, onChange: switchMode, realAvailable: info?.realAvailable, realHint: info?.realHint }}
+          theme={{ value: theme, onChange: setTheme }}
+          fontSize={{ value: fontSize, onChange: setFontSize }}
+          present={{ active: present, onToggle: () => setPresent((p) => !p) }}
+          talkTrack={{ active: talkTrack, onToggle: () => setTalkTrack((t) => !t) }}
+          onReset={reset}
+        />
       </header>
+      <div className="banner">Simulation: the CA, certificates and handshake are in-process mocks using real X.509 (openssl). Nothing leaves this container. Mode: {mode}.</div>
+      {present && story && (
+        <section className="card result">
+          <h2>{story.title} (presenter mode)</h2>
+          <ol>
+            {story.steps.map((s, i) => <li key={i}>{s}</li>)}
+          </ol>
+        </section>
+      )}
+      {talkTrack && story && (
+        <section className="card result">
+          <h2>Talk track</h2>
+          <ol>
+            {story.steps.map((s, i) => <li key={i}>{s}</li>)}
+          </ol>
+        </section>
+      )}
 
       <section className="cards">
         <div className="card">
@@ -90,13 +143,10 @@ export default function App() {
             </label>
             <button className="primary" onClick={mint} disabled={busy}>Mint SVID</button>
             <button onClick={runHandshake} disabled={busy || !svid}>Run mTLS handshake</button>
-            <button onClick={reset} disabled={busy}>Reset</button>
             <label>
               Speed
-              <select value={speed} onChange={(e) => setSpeed(Number(e.target.value))}>
-                <option value={0.5}>0.5×</option>
-                <option value={1}>1×</option>
-                <option value={2}>2×</option>
+              <select value="1" disabled>
+                <option value="1">1×</option>
               </select>
             </label>
           </div>
@@ -123,7 +173,8 @@ export default function App() {
           <h2>SVID</h2>
           <p className="pass">{svid.spiffeId}</p>
           <p className="muted">serial {svid.serial} · notAfter {String(svid.notAfter).slice(0, 19)} · sha256 {svid.fingerprint.slice(0, 32)}…</p>
-          <pre className="json">{svid.certPem}</pre>
+          {svid.ttlNote && <p className="muted">{svid.ttlNote}</p>}
+          <Json value={svid.certPem} label="SVID certificate (PEM)" hot={['spiffeId']} />
         </section>
       )}
 
@@ -147,7 +198,7 @@ export default function App() {
           <h2>Result</h2>
           <p className={result.valid ? 'pass' : 'refused'}>{result.valid ? 'ACCEPTED (unexpected)' : 'REFUSED'} — {result.kind}</p>
           {result.note && <p className="muted">{result.note}</p>}
-          <pre className="json">{JSON.stringify(result.failures, null, 2)}</pre>
+          <Json value={result.failures} label="Failures" hot={['failures']} />
         </section>
       )}
 

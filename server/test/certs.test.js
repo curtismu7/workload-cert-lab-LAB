@@ -21,7 +21,29 @@ describe('mock X.509 authority', () => {
       const svid = foreign.mintSvid('/orders');
       const r = ca.verify({ leafPem: svid.certPem });
       assert.equal(r.valid, false);
-      assert.ok(r.failures.some((f) => f.includes('trust domain')));
+      assert.ok(
+        r.failures.some((f) => f === 'SAN URI is not in trust domain corp.example.com'),
+        `expected the exact SAN trust-domain failure, got: ${JSON.stringify(r.failures)}`,
+      );
+    } finally {
+      foreign.cleanup();
+    }
+  });
+
+  it('refuses a well-formed cert with a trusted SAN but signed by the wrong CA (signature only)', () => {
+    const foreign = new MockAuthority('corp.example.com');
+    try {
+      // Same trust domain name in the SAN, but a different root signed it.
+      const svid = foreign.mintSvid('/orders');
+      assert.equal(svid.spiffeId, 'spiffe://corp.example.com/orders');
+      const r = ca.verify({ leafPem: svid.certPem });
+      assert.equal(r.valid, false);
+      assert.ok(
+        r.failures.some((f) => f === 'signature does not chain to the trust-domain root CA'),
+        `expected the exact signature-chain failure, got: ${JSON.stringify(r.failures)}`,
+      );
+      // and nothing else: the SAN is in our domain, so the only failure must be the signature
+      assert.deepEqual(r.failures, ['signature does not chain to the trust-domain root CA']);
     } finally {
       foreign.cleanup();
     }
