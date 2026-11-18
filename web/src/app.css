@@ -22,10 +22,10 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; }
-.lab { max-width: 1600px; margin: 0 auto; padding: 16px; }
+.lab { max-width: 2200px; margin: 0 auto; padding: 20px 24px 48px; }
 
-.shell-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; border-bottom: 3px solid var(--accent); padding-bottom: 12px; margin-bottom: 16px; }
-.shell-bar h1 { margin: 0; font-size: 1.6rem; }
+.shell-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px 16px; background: var(--box-dark); color: var(--on-box); border-bottom: 3px solid var(--accent); margin-bottom: 16px; }
+.shell-bar h1 { margin: 0; font-size: 1.6rem; color: var(--on-box); }
 .banner { font-size: 0.95rem; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; }
 
 .cards { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
