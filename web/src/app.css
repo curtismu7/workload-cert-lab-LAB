@@ -1,0 +1,53 @@
+:root {
+  --bg: #101418;
+  --surface: #1a2028;
+  --text: #e8edf2;
+  --muted: #93a1b0;
+  --accent: #b3121b;
+  --accent-2: #d6363e;
+  --border: #2c3540;
+  --pass: #2f9e63;
+  --refuse: #d6363e;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f5f7f9;
+    --surface: #ffffff;
+    --text: #1a2028;
+    --muted: #5c6b7a;
+    --border: #d5dde5;
+  }
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; }
+.lab { max-width: 1180px; margin: 0 auto; padding: 16px; }
+
+.shell-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; border-bottom: 3px solid var(--accent); padding-bottom: 12px; margin-bottom: 16px; }
+.shell-bar h1 { margin: 0; font-size: 1.4rem; }
+.banner { font-size: 0.8rem; color: var(--muted); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; }
+
+.cards { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+@media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
+.card { background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 8px; padding: 14px; }
+.card h2 { margin-top: 0; font-size: 1.05rem; }
+.card p { font-size: 0.85rem; line-height: 1.5; }
+
+.controls { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+button { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; cursor: pointer; font-size: 0.85rem; }
+button:hover:not(:disabled) { border-color: var(--accent-2); }
+button:disabled { opacity: 0.5; cursor: default; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+label { font-size: 0.8rem; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+select, input { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px; }
+
+.attack-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+
+.result { margin-top: 16px; }
+.pass { color: var(--pass); font-weight: 600; }
+.refused { color: var(--refuse); font-weight: 600; }
+.fail { color: var(--refuse); }
+.muted { color: var(--muted); font-size: 0.8rem; }
+.json { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px; font-size: 0.78rem; overflow-wrap: anywhere; white-space: pre-wrap; }
+footer { margin: 16px 0; }

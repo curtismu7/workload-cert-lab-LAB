@@ -1,0 +1,10 @@
+{
+  "id": "workload-cert-lab",
+  "name": "Workload Cert Lab",
+  "catalogId": "D138",
+  "tier": "Demo",
+  "port": 7823,
+  "description": "Mock X.509/SPIFFE-style workload identity: short-lived SVID-like certificates, mTLS handshake walkthrough, expiry and rotation, break-it pane.",
+  "composeFile": "workload-cert-lab-LAB/docker-compose.yml",
+  "pingProducts": []
+}

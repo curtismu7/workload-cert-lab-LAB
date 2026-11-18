@@ -1,0 +1,16 @@
+services:
+  workload-cert-lab:
+    build: .
+    image: workload-cert-lab:local
+    container_name: workload-cert-lab
+    ports:
+      - "127.0.0.1:7823:7823"
+    environment:
+      - PORT=7823
+      - NODE_ENV=production
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true

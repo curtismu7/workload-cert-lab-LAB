@@ -1,0 +1,13 @@
+{
+  "id": "workload-cert-lab",
+  "title": "Workload Cert Lab",
+  "summary": "X.509/SPIFFE-style workload identity: a trust-domain root CA signs short-lived SVID certificates; a mutual-TLS handshake walkthrough with a break-it pane.",
+  "verticals": ["default"],
+  "cards": [
+    { "id": "trust-domain", "title": "Trust domain root CA", "body": "The root CA for {{cast.trustDomain}} is the only trust anchor this verifier accepts. Trust comes from configuration, not from the name." },
+    { "id": "svid", "title": "SVID (workload certificate)", "body": "A short-lived EC P-256 certificate whose SAN carries the SPIFFE URI {{cast.svid}}. Same path under another domain is a different identity." },
+    { "id": "mtls", "title": "Mutual TLS", "body": "Both sides present a certificate and both verify against the same root. The server then authorizes the call on the client's SAN URI." },
+    { "id": "rotation", "title": "Short-lived + rotation", "body": "Certificates expire in minutes-to-hours, so a stolen one dies fast; the platform re-issues automatically (SPIRE-style agent)." },
+    { "id": "break-it", "title": "Break it on purpose", "body": "Foreign-domain cert (SAN not in {{cast.trustDomain}}), expired SVID, tampered bytes — each shows the exact refusal." }
+  ]
+}

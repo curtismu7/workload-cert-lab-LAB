@@ -1,0 +1,9 @@
+{
+  "brandName": "Workload Cert Lab",
+  "vocabulary": {
+    "workload": "workload",
+    "trustDomain": "trust domain",
+    "certificate": "SVID"
+  },
+  "accent": "#b3121b"
+}
