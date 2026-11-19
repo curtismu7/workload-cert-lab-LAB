@@ -18,6 +18,8 @@ jobs:
         run: node --test server/test/*.test.js
       - name: Web build
         run: npm install --prefix web && npm run build --prefix web
+      # The vendored shared stylesheet must match the hash pinned when it was last re-vendored.
+      - run: bash scripts/check-ui-standard.sh
       - name: Forbidden strings
         run: echo "checked via repo secret in gitleaks-style job below"
 
