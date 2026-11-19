@@ -224,7 +224,7 @@ export default function App() {
 
       <section className="cards">
         <div className="card">
-          <h2>Identity flow</h2>
+          <h2><span className="step-num" aria-hidden="true">1</span>Identity flow</h2>
           <p>The trust-domain root CA signs short-lived workload certificates (SPIFFE SVID style). Each cert carries a SPIFFE URI in its Subject Alternative Name. A workload-to-workload call runs mutual TLS: both sides present a cert and both verify it against the same root.</p>
           <DiagramStepBar stepper={stepper} caption={step ? step.label : ''} testId="wcl-step-bar" />
           {step && (
@@ -247,7 +247,7 @@ export default function App() {
         </div>
 
         <div className="card">
-          <h2>Break it</h2>
+          <h2><span className="step-num" aria-hidden="true">2</span>Break it</h2>
           <p>Each attack shows the exact refusal the verification chain produces.</p>
           <div className="attack-grid">
             {ATTACKS.map((a) => (
@@ -264,7 +264,7 @@ export default function App() {
 
       {svid && (
         <section className="card result">
-          <h2>SVID</h2>
+          <h2><span className="step-num" aria-hidden="true">3</span>SVID</h2>
           <p className="pass">{svid.spiffeId}</p>
           <p className="muted">serial {svid.serial} · notAfter {String(svid.notAfter).slice(0, 19)} · sha256 {svid.fingerprint.slice(0, 32)}…</p>
           {svid.ttlNote && <p className="muted">{svid.ttlNote}</p>}
@@ -274,7 +274,7 @@ export default function App() {
 
       {handshake && (
         <section className="card result">
-          <h2>Handshake</h2>
+          <h2><span className="step-num" aria-hidden="true">4</span>Handshake</h2>
           <p className={handshake.complete ? 'pass' : 'refused'}>{handshake.complete ? 'MUTUAL TLS COMPLETE — both identities verified' : 'HANDSHAKE FAILED'}</p>
           <ol>
             {handshake.steps.map((s) => (
@@ -289,7 +289,7 @@ export default function App() {
 
       {result && (
         <section className="card result">
-          <h2>Result</h2>
+          <h2><span className="step-num" aria-hidden="true">5</span>Result</h2>
           <p className={result.valid ? 'pass' : 'refused'}>{result.valid ? 'ACCEPTED (unexpected)' : 'REFUSED'} — {result.kind}</p>
           {result.note && <p className="muted">{result.note}</p>}
           <Json value={result.failures} label="Failures" hot={['failures']} />
