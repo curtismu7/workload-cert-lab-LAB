@@ -1,23 +1,13 @@
 :root {
-  --bg: #101418;
-  --surface: #1a2028;
-  --text: #e8edf2;
-  --muted: #93a1b0;
+  --bg: light-dark(#f5f7f9, #101418);
+  --surface: light-dark(#ffffff, #1a2028);
+  --text: light-dark(#1a2028, #e8edf2);
+  --muted: light-dark(#5c6b7a, #93a1b0);
   --accent: #b3121b;
   --accent-2: #d6363e;
-  --border: #2c3540;
+  --border: light-dark(#d5dde5, #2c3540);
   --pass: #2f9e63;
   --refuse: #d6363e;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f5f7f9;
-    --surface: #ffffff;
-    --text: #1a2028;
-    --muted: #5c6b7a;
-    --border: #d5dde5;
-  }
 }
 
 * { box-sizing: border-box; }
@@ -42,7 +32,7 @@ body { margin: 0; background: var(--bg-lab, var(--bg)); color: var(--text-body, 
 button { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; cursor: pointer; font-size: 1rem; }
 button:hover:not(:disabled) { border-color: var(--accent-2); }
 button:disabled { opacity: 0.5; cursor: default; }
-button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent, #fff); }
 label { font-size: 0.95rem; color: var(--muted); display: flex; gap: 6px; align-items: center; }
 select, input { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px; }
 
