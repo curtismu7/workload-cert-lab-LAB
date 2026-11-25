@@ -19,7 +19,7 @@ jobs:
       - name: Web build
         run: npm install --prefix web && npm run build --prefix web
       # The vendored shared stylesheet must match the hash pinned when it was last re-vendored.
-      - run: STANDALONE_UI_CANONICAL_URL=https://raw.githubusercontent.com/curtismu7/AI-DEMO-Standalone/header-standard-2026-11-24/shared/standalone-ui.css bash scripts/check-ui-standard.sh
+      - run: STANDALONE_UI_CANONICAL_URL=https://raw.githubusercontent.com/curtismu7/AI-DEMO-Standalone/main/shared/standalone-ui.css bash scripts/check-ui-standard.sh
       - name: Forbidden strings
         run: echo "checked via repo secret in gitleaks-style job below"
 
